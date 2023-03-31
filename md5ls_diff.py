@@ -1,52 +1,61 @@
 #!/usr/bin/env python3
 
-# For argument access
+import io
 import sys
 
-# Function returns list of lines from a text file
-def getLines(filename):
-    openFile = open(filename)
-    lineList = openFile.readlines()
-    openFile.close()
+def main():
+    """md5ls_diff.py - Compare two md5ls files
+    
+    Designed for use with output of md5ls.py
+    """
+
+    # Check for number of arguments
+    if len(sys.argv) != 3:
+        print('2 input files must be given as arguments')
+        exit()
+
+    # Read and clean lines from files
+    lines1 = strip_lines(get_lines(sys.argv[1]))
+    lines2 = strip_lines(get_lines(sys.argv[2]))
+
+    # Convert lines into dictionaries
+    dict1 = md5ls_to_dict(lines1)
+    dict2 = md5ls_to_dict(lines2)
+
+    # For every md5 in list2, if the md5 isn't in list1, print it
+    for md5sum in dict2:
+        if md5sum not in dict1:
+            print(md5sum + '  ' + dict2[md5sum])
+
+
+def get_lines(filename):
+    """Return list of lines from the text file at filename"""
+    with io.open(filename) as f:
+        lineList = f.readlines()
 
     return lineList
 
-# Function returns list of non-blank lines without newlines
-def stripLines(lineList):
-    strippedLines = []
 
-    for line in lineList:
+def strip_lines(line_list):
+    """Return list of non-blank lines without newlines from line_list"""
+    stripped_lines = []
+
+    for line in line_list:
         if line != '\n':
-            strippedLines.append(line.strip())
+            stripped_lines.append(line.strip())
 
-    return strippedLines
-
-# Function returns (key:value pairs of md5sums and filepaths
-# when given a md5ls output as argument
-def md5lsToDict(md5lsLines):
-    md5dict = {}
-
-    for line in md5lsLines:
-        md5dict[line[:32]] = line[34:]
-
-    return md5dict
+    return stripped_lines
 
 
+def md5ls_to_dict(md5ls_lines):
+    """Return (key:value pairs of md5sums and filepaths from md5ls_lines"""
+    md5_dict = {}
 
-# Check for number of arguments
-if len(sys.argv) != 3:
-    print('2 input files must be given as arguments')
-    exit()
+    for line in md5ls_lines:
+        md5_dict[line[:32]] = line[34:]
 
-# Read and clean lines from files
-lines1 = stripLines(getLines(sys.argv[1]))
-lines2 = stripLines(getLines(sys.argv[2]))
+    return md5_dict
 
-# Convert lines into dictionaries
-dict1 = md5lsToDict(lines1)
-dict2 = md5lsToDict(lines2)
 
-# For every md5 in list2, if the md5 isn't in list1, print it
-for md5sum in dict2:
-    if md5sum not in dict1:
-        print(md5sum + '  ' + dict2[md5sum])
+if __name__ == "__main__":
+    main()
