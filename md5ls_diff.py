@@ -58,7 +58,7 @@ def main():
             del dict2[md5sum]
 
     # The only items left in right list will be hashes unique to that list
-    for md5sum in dict2:
+    for md5sum in list(dict2.keys()):
         for filepath in dict2[md5sum]:
             unique_right.append("> " + md5sum + "  " + filepath)
         # Done with hash in left only
