@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import io
 import sys
 
@@ -9,14 +10,29 @@ def main():
     Designed for use with output of md5ls.py
     """
 
-    # Check for number of arguments
-    if len(sys.argv) != 3:
-        print('2 input files must be given as arguments')
-        exit()
+    parser = argparse.ArgumentParser(
+        prog='md5ls.py',
+        description='List files and their MD5 sums')
+    parser.add_argument(
+        'left_file',
+        help='first of two files to compare'
+    )
+    parser.add_argument(
+        'right_file',
+        help='second of two files to compare'
+    )
+    parser.add_argument(
+        '-s',
+        '--summary',
+        action='store_true',
+        help='output a summary of changes only, no hashes or paths will be '
+            +'printed.'
+    )
+    args = parser.parse_args()
 
     # Read and clean lines from files
-    lines1 = strip_lines(get_lines(sys.argv[1]))
-    lines2 = strip_lines(get_lines(sys.argv[2]))
+    lines1 = strip_lines(get_lines(args.left_file))
+    lines2 = strip_lines(get_lines(args.right_file))
 
     # Convert lines into dictionaries
     dict1 = md5ls_to_dict(lines1)
@@ -80,14 +96,23 @@ def main():
         exit()
 
     # Print results
-    print_if_not_empty(unique_left, str(len(unique_left))
-                                    + " files found only in the 1st manifest, "
-                                    + sys.argv[1])
-    print_if_not_empty(unique_right, str(len(unique_right))
-                                    + " files found only in the 2nd manifest, "
-                                    + sys.argv[2])
-    print_if_not_empty(moved, str(len(moved)) + " files which have the same "
-                            + "hash, but have been moved to a different path")
+    left_heading = (str(len(unique_left))
+                    + " files found only in the left manifest, "
+                    + sys.argv[1])
+    right_heading = (str(len(unique_right))
+                    + " files found only in the right manifest, "
+                    + sys.argv[2])
+    moved_heading = (str(len(moved)) + " files which have the same "
+                    + "hash, but have been moved to a different path")
+    
+    if(args.summary):
+        print(left_heading)
+        print(right_heading)
+        print(moved_heading)
+    else:
+        print_if_not_empty(unique_left, left_heading)
+        print_if_not_empty(unique_right, right_heading)
+        print_if_not_empty(moved, moved_heading)
 
 
 def get_lines(filename):
