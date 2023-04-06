@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import io
 import os
+import sys
 from multiprocessing import Pool
 
 def main():
@@ -59,9 +60,12 @@ def main():
     )
     args = parser.parse_args()
 
+    # Work around bug in PowerShell 5. See function definition for more info.
+    root_dir = validate_dir_path(args.root_dir)
+
     # Walk file tree from root dir, collect all files found, ignore empty dirs
     file_list = []
-    for root, dirs, files in os.walk(args.root_dir):
+    for root, dirs, files in os.walk(root_dir):
         for name in files:
             file_list.append(os.path.join(root, name))
     
@@ -76,7 +80,7 @@ def main():
     # Transform full filepaths into relative paths
     result_list = []
     for hash, path in hash_list:
-        pretty_path = os.path.relpath(path, args.root_dir).replace(os.sep, '/')
+        pretty_path = os.path.relpath(path, root_dir).replace(os.sep, '/')
         result_list.append((hash, pretty_path)) 
 
     # Sort list to produce a consistent manifest output
@@ -119,6 +123,26 @@ def get_hash_for_file(filepath):
         for chunk in iter(lambda: in_file.read(32768), b''):
             hash.update(chunk)
     return (hash.hexdigest(), filepath)
+
+
+def validate_dir_path(string):
+    """
+    Works around a bug in PowerShell 5 that appends a double-quote to paths
+    containing spaces passed as arguments. This only works when the path is
+    passed as the last argument. Put -r <path> at the end of your command on
+    PowerShell 5.
+    
+    https://github.com/python/cpython/issues/84026
+
+    :param string: The path that needs to be validated
+    :return: The validated path
+    """
+    if sys.platform.startswith('win') and string.endswith('"'):
+        string = string[:-1]
+    if os.path.isdir(string):
+        return string
+    else:
+        raise NotADirectoryError(string)
 
 
 if __name__ == "__main__":
