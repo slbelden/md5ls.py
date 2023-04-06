@@ -77,7 +77,7 @@ def main():
     for md5sum in list(dict2.keys()):
         for filepath in dict2[md5sum]:
             unique_right.append("> " + md5sum + "  " + filepath)
-        # Done with hash in left only
+        # Done with hash in right only
         del dict2[md5sum]
 
     # Sanity checks
