@@ -5,9 +5,9 @@ import io
 import sys
 
 def main():
-    """md5ls_diff.py - Compare two md5ls files
+    """md5ls.diff - Compare two md5ls files
     
-    Designed for use with output of md5ls.py
+    Designed for use with output of md5ls.create
     """
 
     parser = argparse.ArgumentParser(
