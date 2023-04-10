@@ -2,6 +2,9 @@
 
 import argparse
 
+from md5ls.create import create
+from md5ls.diff import diff
+
 def main():
     parser = argparse.ArgumentParser(
         prog='md5ls',
@@ -50,6 +53,7 @@ def main():
         help='sort output list by MD5 sum instead of by filepath. '
             +'Useful for grouping duplicate files together in the output.'
     )
+    parser_create.set_defaults(func=create)
 
     parser_diff = subparsers.add_parser(
     'diff',
@@ -66,10 +70,11 @@ def main():
         action='store_true',
         help='output a summary of changes only, no hashes or paths will be '
             +'printed.')
+    parser_diff.set_defaults(func=diff)
     
     args = parser.parse_args()
+    args.func(args)
 
-# TODO
 
 if __name__ == "__main__":
     main()

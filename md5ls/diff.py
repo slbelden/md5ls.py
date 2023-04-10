@@ -4,31 +4,11 @@ import argparse
 import io
 import sys
 
-def main():
+def diff(args):
     """md5ls.diff - Compare two md5ls files
     
     Designed for use with output of md5ls.create
     """
-
-    parser = argparse.ArgumentParser(
-        prog='md5ls.py',
-        description='List files and their MD5 sums')
-    parser.add_argument(
-        'left_file',
-        help='first of two files to compare'
-    )
-    parser.add_argument(
-        'right_file',
-        help='second of two files to compare'
-    )
-    parser.add_argument(
-        '-s',
-        '--summary',
-        action='store_true',
-        help='output a summary of changes only, no hashes or paths will be '
-            +'printed.'
-    )
-    args = parser.parse_args()
 
     # Read and clean lines from files
     lines1 = strip_lines(get_lines(args.left_file))
@@ -159,7 +139,3 @@ def print_if_not_empty(list, heading):
         for line in list:
             print(line)
         print()
-
-
-if __name__ == "__main__":
-    main()

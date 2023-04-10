@@ -7,58 +7,8 @@ import os
 import sys
 from multiprocessing import Pool
 
-def main():
-    """md5ls.create - List files and their MD5 sums
-
-    Python implementation of the Bash one-liner:
-    'find . -type f -exec md5sum {} + | LC_ALL=C sort -k2'
-    with some quality-of-life additions.
-
-    help: md5ls.create -h
-    """
-
-    parser = argparse.ArgumentParser(
-        prog='md5ls.py',
-        description='List files and their MD5 sums')
-    parser.add_argument(
-        '-r',
-        '--rootDir',
-        action='store',
-        default='.',
-        dest='root_dir',
-        help='root directory to walk (default: "."). '
-            +'Output filepaths will be relative to this directory.')
-    parser.add_argument(
-        '-o',
-        '--outFile',
-        action='store',
-        dest='out_file',
-        help='write output to a file instead of stdout. '
-            +'Specifying an output file is highly recommended over using '
-            +'terminal output redirection, as terminal output may have '
-            +'OS-dependent newlines or character set encoding. '
-            +'No checks are performed! Will overwrite OUT_FILE if it exists!')
-    parser.add_argument(
-        '-j',
-        '--jobs',
-        action='store',
-        type=int,
-        default=1,
-        choices=range(1,61), # prevents wait() handles exceeding limit
-        metavar="[1-60]",
-        dest='num_jobs',
-        help='number of worker processes to use (default: 1). '
-            +'Set to 2 or greater to enable multithreading. '
-            +'Recommended value = number of physical CPU cores available. '
-            +"Experimental. Huge performance gains, but doesn't like CTRL-C.")
-    parser.add_argument(
-        '-k1',
-        '--k1',
-        action='store_true',
-        help='sort output list by MD5 sum instead of by filepath. '
-            +'Useful for grouping duplicate files together in the output.'
-    )
-    args = parser.parse_args()
+def create(args):
+    """md5ls.create - List files and their MD5 sums"""
 
     # Work around bug in PowerShell 5. See function definition for more info.
     root_dir = validate_dir_path(args.root_dir)
@@ -143,7 +93,3 @@ def validate_dir_path(string):
         return string
     else:
         raise NotADirectoryError(string)
-
-
-if __name__ == "__main__":
-    main()
