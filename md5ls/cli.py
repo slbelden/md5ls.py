@@ -6,12 +6,14 @@ from md5ls.create import create
 from md5ls.diff import diff
 
 def main():
+    # top-level
     parser = argparse.ArgumentParser(
         prog='md5ls',
         description='Tools for verifying files with hash-list manifests')
     subparsers = parser.add_subparsers(
         help='use "md5ls <subcommand> -h" for detailed help')
 
+    # subcommand: create
     parser_create = subparsers.add_parser(
         'create',
         help='create a new list of hashes and files')
@@ -55,6 +57,7 @@ def main():
     )
     parser_create.set_defaults(func=create)
 
+    # subcommand: diff
     parser_diff = subparsers.add_parser(
     'diff',
     help='compare two existing lists of hashes')
@@ -72,6 +75,7 @@ def main():
             +'printed.')
     parser_diff.set_defaults(func=diff)
     
+    # run selected subcommand
     args = parser.parse_args()
     args.func(args)
 
