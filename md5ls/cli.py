@@ -4,13 +4,14 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(
-        prog='md5ls.py',
-        description='List files and their MD5 sums')
-    subparsers = parser.add_subparsers(help='sub-command help')
+        prog='md5ls',
+        description='Tools for verifying files with hash-list manifests')
+    subparsers = parser.add_subparsers(
+        help='use "md5ls <subcommand> -h" for detailed help')
 
     parser_create = subparsers.add_parser(
         'create',
-        help='create an md5ls manifest')
+        help='create a new list of hashes and files')
     parser_create.add_argument(
         '-r',
         '--rootDir',
@@ -52,7 +53,7 @@ def main():
 
     parser_diff = subparsers.add_parser(
     'diff',
-    help='compare two md5ls manifests')
+    help='compare two existing lists of hashes')
     parser_diff.add_argument(
         'left_file',
         help='first of two files to compare')
