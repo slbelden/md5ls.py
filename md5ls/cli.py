@@ -73,6 +73,16 @@ def main():
         action='store_true',
         help='output a summary of changes only, no hashes or paths will be '
             +'printed.')
+    parser_diff.add_argument(
+        '-o',
+        '--outFile',
+        action='store',
+        dest='out_file',
+        help='write output to a file instead of stdout. '
+            +'Specifying an output file is highly recommended over using '
+            +'terminal output redirection, as terminal output may have '
+            +'OS-dependent newlines or character set encoding. '
+            +'No checks are performed! Will overwrite OUT_FILE if it exists!')
     parser_diff.set_defaults(func=diff)
     
     # run selected subcommand

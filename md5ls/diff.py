@@ -73,31 +73,48 @@ def diff(args):
         print()
         error_flag = True
     if(error_flag):
-        exit()
+        exit(-1)
 
-    # Print results
+    # Build summary strings
     left_heading = (str(len(unique_left))
                     + " files found only in the left manifest, "
-                    + sys.argv[1])
+                    + sys.argv[2])
     right_heading = (str(len(unique_right))
                     + " files found only in the right manifest, "
-                    + sys.argv[2])
+                    + sys.argv[3])
     moved_heading = (str(int(len(moved) / 2)) + " files which have the same "
                     + "hash, but have been moved to a different path")
     
-    if(args.summary):
-        print(left_heading)
-        print(right_heading)
-        print(moved_heading)
+    # If outFile is not given, print to console
+    if(args.out_file is None):
+        if(args.summary):
+            print(left_heading)
+            print(right_heading)
+            print(moved_heading)
+        else:
+            print_if_not_empty(unique_left, left_heading)
+            print_if_not_empty(unique_right, right_heading)
+            print_if_not_empty(moved, moved_heading)
+
+    # Write the same output to the file instead of the console
     else:
-        print_if_not_empty(unique_left, left_heading)
-        print_if_not_empty(unique_right, right_heading)
-        print_if_not_empty(moved, moved_heading)
+        # UTF-8 encoding must be specified or Windows will use cp1252
+        # Unix-style newlines are used regardless of platform for consistency
+        with io.open(args.out_file, 'w', encoding='utf8', newline='\n') as f:
+            if(args.summary):
+                f.write(left_heading + '\n')
+                f.write(right_heading + '\n')
+                f.write(moved_heading + '\n')
+            else:
+                write_if_not_empty(unique_left, left_heading, f)
+                write_if_not_empty(unique_right, right_heading, f)
+                write_if_not_empty(moved, moved_heading, f)
+        
 
 
 def get_lines(filename):
     """Return list of lines from the text file at filename"""
-    with io.open(filename) as f:
+    with io.open(filename, encoding='utf-8') as f:
         lineList = f.readlines()
 
     return lineList
@@ -139,3 +156,13 @@ def print_if_not_empty(list, heading):
         for line in list:
             print(line)
         print()
+
+
+def write_if_not_empty(list, heading, out_file):
+    """Write heading once, then each string in list, if list isn't empty"""
+    if(len(list) > 0):
+        out_file.write(heading + '\n')
+        for line in list:
+            out_file.write(line + '\n')
+        out_file.write('\n')
+    
