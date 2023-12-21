@@ -14,7 +14,7 @@ setup(
     install_requires=[],
     entry_points={
         'console_scripts': [
-            'md5ls=md5ls:main',
+            'md5ls=md5ls.cli:main',
         ],
     },
 )
