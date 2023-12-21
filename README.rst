@@ -73,16 +73,36 @@ Generate only a summary of changes, without the full list of lines with ``-s``:
 
     ``md5ls diff file1.out file2.out -s``
 
+Installation
+============
+
+1. Navigate to a good temporary directory of your choice:
+
+    ``cd ~``
+
+2. Clone this repository.
+
+    ``git clone https://github.com/slbelden/md5ls.py.git``
+
+3. Change directory into the folder git just downloaded:
+   
+    ``cd md5ls.py``
+
+4. Install (substitute pipx for pip if your system complains):
+   
+    ``pip install .``
+
+5. Manage your PATH on your own, good luck, then use:
+
+    ``md5ls``
+
 Usage
 =====
-md5ls is intended to by run at the command line as a module:
-
-    ``python3 -m md5ls``
 
 Get basic usage help with ``-h``:
 
-    ``python3 -m md5ls -h``
+    ``md5ls -h``
 
-And subcommand help in the same manner:
+and subcommand help in the same manner:
 
-    ``python3 -m md5ls create -h``
+    ``md5ls create -h``
