@@ -82,8 +82,9 @@ def diff(args):
     right_heading = (str(len(unique_right))
                     + " files found only in the right manifest, "
                     + sys.argv[3])
-    moved_heading = (str(int(len(moved) / 2)) + " files which have the same "
-                    + "hash, but have been moved to a different path")
+    moved_heading = (str(int(len(moved))) + " filepaths which have the same "
+                    + "hash, but have been moved to a different path, or "
+                    + "have been duplicated into a new path in just one side")
     
     # If outFile is not given, print to console
     if(args.out_file is None):
