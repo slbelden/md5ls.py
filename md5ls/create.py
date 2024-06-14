@@ -63,15 +63,18 @@ def create(args):
 def get_hash_for_file(filepath):
     """Return 2-tuple: (md5sum, relative_filepath) for file at 'filepath'."""
     hash = hashlib.md5()
-    # Open file as read-only, using binary mode to avoid OS newline conversions 
-    with open(filepath, 'rb') as in_file:
-        # Update hash in 32kb chunks until end of file.
-        # 32kb is a decent compromise between two competing speed goals:
-        #     * A few large files benefit from fewer reads with larger chunks
-        #     * Many small files benefit from lower overhead of smaller chunks
-        # Speed testing showed 16-64kb to be optimal depending on file sizes
-        for chunk in iter(lambda: in_file.read(32768), b''):
-            hash.update(chunk)
+    try:
+        # Open file as read-only, using binary mode to avoid OS newline conversions 
+        with open(filepath, 'rb') as in_file:
+            # Update hash in 32kb chunks until end of file.
+            # 32kb is a decent compromise between two competing speed goals:
+            #     * A few large files benefit from fewer reads with larger chunks
+            #     * Many small files benefit from lower overhead of smaller chunks
+            # Speed testing showed 16-64kb to be optimal depending on file sizes
+            for chunk in iter(lambda: in_file.read(32768), b''):
+                hash.update(chunk)
+    except PermissionError:
+        print("WARN: Permission denied opening " + filepath)
     return (hash.hexdigest(), filepath)
 
 
