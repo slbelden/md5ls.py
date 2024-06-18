@@ -155,7 +155,11 @@ def print_if_not_empty(list, heading):
     if(len(list) > 0):
         print(heading)
         for line in list:
-            print(line)
+            try:
+                print(line)
+            except UnicodeEncodeError:
+                # Force the string into ascii only if it otherwise won't work
+                print(line.encode('ascii', errors='ignore').decode('ascii'))
         print()
 
 
